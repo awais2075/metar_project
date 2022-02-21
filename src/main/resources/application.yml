@@ -1,0 +1,16 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /metar
+spring:
+  profiles:
+    active: dev
+logging:
+  level:
+    org.springframework.web: ERROR
+    com.docker.demo: DEBUG
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss} - %msg%n'
+    file: '%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n'
+  file:
+    name: /tmp/logs/docker.log
