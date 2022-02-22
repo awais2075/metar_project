@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "subscriptions")
@@ -19,6 +21,8 @@ public class Subscription {
     private Long id;
 
     @Column(name = "icao_code", nullable = false, unique = true)
+    @NotNull(message = "{icaocode.notnull}")
+    @NotBlank(message = "{icaocode.notblank}")
     private String icaoCode;
 
 }
