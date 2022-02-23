@@ -55,6 +55,18 @@ public class RestControllerExceptionHandler {
         return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(InvalidPageSizeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleInvalidPageSizeException(InvalidPageSizeException ex) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(NegativePageIndexException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleNegativePageIndexException(NegativePageIndexException ex) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
     private ApiError buildErrorResponse(HttpStatus status, String message) {
         return ApiError.builder()
                 .timestamp(LocalDateTime.now())
