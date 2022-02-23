@@ -44,15 +44,15 @@ public class RestControllerExceptionHandler {
     }
 
     @ExceptionHandler(SubscriptionNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleSubscriptionNotFoundException(SubscriptionNotFoundException ex) {
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(MetarNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleMetarNotFoundException(MetarNotFoundException ex) {
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     private ApiError buildErrorResponse(HttpStatus status, String message) {
