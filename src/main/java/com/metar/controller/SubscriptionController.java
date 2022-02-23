@@ -1,7 +1,9 @@
 package com.metar.controller;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.metar.entity.Subscription;
 import com.metar.exception.SubscriptionFoundException;
+import com.metar.exception.SubscriptionNotFoundException;
 import com.metar.service.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +21,7 @@ public class SubscriptionController {
 
     @GetMapping
     @ResponseStatus(value = HttpStatus.OK)
-    public List<Subscription> getSubscriptions() throws Exception {
+    public List<Subscription> getSubscriptions() {
         return subscriptionService.getSubscriptions();
     }
 
@@ -27,5 +29,11 @@ public class SubscriptionController {
     @ResponseStatus(value = HttpStatus.CREATED)
     public Subscription addSubscription(@Valid @RequestBody Subscription subscription) throws SubscriptionFoundException {
         return subscriptionService.addSubscription(subscription);
+    }
+
+    @DeleteMapping("/{icaoCode}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public ObjectNode deleteSubscription(@PathVariable(value = "icaoCode") String icaoCode) throws SubscriptionNotFoundException {
+        return subscriptionService.deleteSubscription(icaoCode);
     }
 }
