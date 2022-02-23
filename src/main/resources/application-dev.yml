@@ -16,3 +16,6 @@ springdoc:
     enabled: true
   swagger-ui:
     path: /api-docs
+paging:
+  subscription:
+    size: 100
