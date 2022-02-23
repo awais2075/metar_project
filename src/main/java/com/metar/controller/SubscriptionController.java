@@ -2,6 +2,8 @@ package com.metar.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.metar.entity.Subscription;
+import com.metar.exception.InvalidPageSizeException;
+import com.metar.exception.NegativePageIndexException;
 import com.metar.exception.SubscriptionFoundException;
 import com.metar.exception.SubscriptionNotFoundException;
 import com.metar.service.SubscriptionService;
@@ -10,7 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
+import javax.websocket.server.PathParam;
 
 @RestController
 @RequestMapping("/subscriptions")
@@ -21,8 +23,8 @@ public class SubscriptionController {
 
     @GetMapping
     @ResponseStatus(value = HttpStatus.OK)
-    public List<Subscription> getSubscriptions() {
-        return subscriptionService.getSubscriptions();
+    public ObjectNode getSubscriptions(@PathParam("pageNo") Integer pageNo, @PathParam("pageSize") Integer pageSize) throws NegativePageIndexException, InvalidPageSizeException {
+        return subscriptionService.getSubscriptions(pageNo, pageSize);
     }
 
     @PostMapping
