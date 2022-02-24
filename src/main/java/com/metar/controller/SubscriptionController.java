@@ -25,7 +25,13 @@ public class SubscriptionController {
     @GetMapping
     @ResponseStatus(value = HttpStatus.OK)
     public ObjectNode getSubscriptions(@PathParam("pageNo") Integer pageNo, @PathParam("pageSize") Integer pageSize) throws NegativePageIndexException, InvalidPageSizeException {
-        return subscriptionService.getSubscriptions(pageNo, pageSize);
+        return subscriptionService.getSubscriptions(pageNo, pageSize, false);
+    }
+
+    @GetMapping("/active")
+    @ResponseStatus(value = HttpStatus.OK)
+    public ObjectNode getActiveSubscriptions(@PathParam("pageNo") Integer pageNo, @PathParam("pageSize") Integer pageSize) throws NegativePageIndexException, InvalidPageSizeException {
+        return subscriptionService.getSubscriptions(pageNo, pageSize, true);
     }
 
     @PostMapping
