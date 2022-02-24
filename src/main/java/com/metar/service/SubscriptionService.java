@@ -2,6 +2,7 @@ package com.metar.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.metar.dto.SubscriptionStatusDto;
 import com.metar.entity.Subscription;
 import com.metar.exception.InvalidPageSizeException;
 import com.metar.exception.NegativePageIndexException;
@@ -56,6 +57,7 @@ public class SubscriptionService {
             throw new SubscriptionFoundException(subscription.getIcaoCode()+ " already exists in subscription list");
         }
         subscription.setId(null);
+        subscription.setActive(true);
         return subscriptionRepository.save(subscription);
     }
 
@@ -72,5 +74,15 @@ public class SubscriptionService {
         node.put("subscriptionCount", subscriptionCount);
         node.put("metarCount", metarCount);
         return node;
+    }
+
+    public Subscription updateSubscriptionStatus(String icaoCode, SubscriptionStatusDto dto) throws SubscriptionNotFoundException {
+        var subscription = subscriptionRepository.findByIcaoCode(icaoCode).orElse(null);
+        if(Objects.isNull(subscription)) {
+            throw new SubscriptionNotFoundException(icaoCode+" subscription not found in list");
+        }
+        subscription.setActive(dto.getActive());
+
+        return subscriptionRepository.save(subscription);
     }
 }
