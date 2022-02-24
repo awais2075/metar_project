@@ -24,4 +24,8 @@ public class Subscription {
     @NotBlank(message = "{icaocode.notblank}")
     private String icaoCode;
 
+    @Column(name = "active", nullable = false)
+    @Hidden
+    private Boolean active;
+
 }
