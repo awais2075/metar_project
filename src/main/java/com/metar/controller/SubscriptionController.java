@@ -1,6 +1,7 @@
 package com.metar.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.metar.dto.SubscriptionStatusDto;
 import com.metar.entity.Subscription;
 import com.metar.exception.InvalidPageSizeException;
 import com.metar.exception.NegativePageIndexException;
@@ -37,5 +38,11 @@ public class SubscriptionController {
     @ResponseStatus(value = HttpStatus.OK)
     public ObjectNode deleteSubscription(@PathVariable(value = "icaoCode") String icaoCode) throws SubscriptionNotFoundException {
         return subscriptionService.deleteSubscription(icaoCode);
+    }
+
+    @PutMapping("/{icaoCode}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public Subscription updateSubscriptionStatus(@PathVariable(value = "icaoCode") String icaoCode, @Valid @RequestBody SubscriptionStatusDto dto) throws SubscriptionNotFoundException {
+        return subscriptionService.updateSubscriptionStatus(icaoCode, dto);
     }
 }
