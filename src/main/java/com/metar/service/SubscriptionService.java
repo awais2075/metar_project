@@ -55,6 +55,7 @@ public class SubscriptionService {
         if(Objects.nonNull(sub)) {
             throw new SubscriptionFoundException(subscription.getIcaoCode()+ " already exists in subscription list");
         }
+        subscription.setId(null);
         return subscriptionRepository.save(subscription);
     }
 

@@ -38,6 +38,7 @@ public class MetarService {
         if(Objects.isNull(subscription)) {
             throw new SubscriptionNotFoundException(icaoCode+" subscription not found in list");
         }
+        metar.setId(null);
         metar.setSubscription(subscription);
         return metarRepository.save(metar);
     }

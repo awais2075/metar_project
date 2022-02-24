@@ -17,7 +17,6 @@ public class Metar {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
-    @Setter(AccessLevel.NONE)
     @Hidden
     private Long id;
 
