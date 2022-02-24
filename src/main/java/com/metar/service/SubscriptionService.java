@@ -12,6 +12,7 @@ import com.metar.repository.MetarRepository;
 import com.metar.repository.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +34,7 @@ public class SubscriptionService {
     @Autowired
     private ObjectNode objectNode;
 
-    public ObjectNode getSubscriptions(Integer pageNo, Integer pageSize) throws NegativePageIndexException, InvalidPageSizeException {
+    public ObjectNode getSubscriptions(Integer pageNo, Integer pageSize, Boolean active) throws NegativePageIndexException, InvalidPageSizeException {
         if(pageNo < 0) {
             throw new NegativePageIndexException("Page No Should Not be Negative");
         }
@@ -42,7 +43,12 @@ public class SubscriptionService {
             throw new InvalidPageSizeException("Page Size is greater than Allowed Page Size i.e."+allowedPageSize);
         }
 
-        var page = subscriptionRepository.findAll(PageRequest.of(pageNo, pageSize));
+        Page<Subscription> page;
+        if(active) {
+            page = subscriptionRepository.findAllActiveSubscriptions(true, PageRequest.of(pageNo, pageSize));
+        } else {
+            page = subscriptionRepository.findAll(PageRequest.of(pageNo, pageSize));
+        }
 
         objectNode.put("totalItems", page.getTotalElements());
         objectNode.put("totalPages", page.getTotalPages());
