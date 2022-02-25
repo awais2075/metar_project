@@ -36,7 +36,7 @@ public class SubscriptionService {
     @Autowired
     private ObjectNode objectNode;
 
-    public ObjectNode getSubscriptions(Integer pageNo, Integer pageSize, Boolean active) throws NegativePageIndexException, InvalidPageSizeException {
+    public ObjectNode getSubscriptions(Integer pageNo, Integer pageSize, Boolean active, String icaoCode) throws NegativePageIndexException, InvalidPageSizeException {
         log.info("getSubscriptions pageNo: {},  pageSize: {}", pageNo, pageSize);
         if(pageNo < 0) {
             log.error("getSubscriptions: Negative Page Index Exception");
@@ -52,7 +52,11 @@ public class SubscriptionService {
         if(active) {
             page = subscriptionRepository.findAllActiveSubscriptions(true, PageRequest.of(pageNo, pageSize));
         } else {
-            page = subscriptionRepository.findAll(PageRequest.of(pageNo, pageSize));
+            if(icaoCode.isBlank()) {
+                page = subscriptionRepository.findAll(PageRequest.of(pageNo, pageSize));
+            } else {
+                page = subscriptionRepository.findAllByIcaoCode(icaoCode, PageRequest.of(pageNo, pageSize));
+            }
         }
 
         objectNode.put("totalItems", page.getTotalElements());
