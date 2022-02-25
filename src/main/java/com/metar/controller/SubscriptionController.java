@@ -24,14 +24,14 @@ public class SubscriptionController {
 
     @GetMapping
     @ResponseStatus(value = HttpStatus.OK)
-    public ObjectNode getSubscriptions(@PathParam("pageNo") Integer pageNo, @PathParam("pageSize") Integer pageSize) throws NegativePageIndexException, InvalidPageSizeException {
-        return subscriptionService.getSubscriptions(pageNo, pageSize, false);
+    public ObjectNode getSubscriptions(@PathParam("pageNo") Integer pageNo, @PathParam("pageSize") Integer pageSize, @RequestParam(value = "icaoCode", defaultValue = "") String icaoCode) throws NegativePageIndexException, InvalidPageSizeException {
+        return subscriptionService.getSubscriptions(pageNo, pageSize, false, icaoCode);
     }
 
     @GetMapping("/active")
     @ResponseStatus(value = HttpStatus.OK)
     public ObjectNode getActiveSubscriptions(@PathParam("pageNo") Integer pageNo, @PathParam("pageSize") Integer pageSize) throws NegativePageIndexException, InvalidPageSizeException {
-        return subscriptionService.getSubscriptions(pageNo, pageSize, true);
+        return subscriptionService.getSubscriptions(pageNo, pageSize, true, "");
     }
 
     @PostMapping
