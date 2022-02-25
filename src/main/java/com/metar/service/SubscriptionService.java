@@ -9,6 +9,7 @@ import com.metar.exception.SubscriptionFoundException;
 import com.metar.exception.SubscriptionNotFoundException;
 import com.metar.repository.MetarRepository;
 import com.metar.repository.SubscriptionRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Objects;
 
 @Service
+@Slf4j
 public class SubscriptionService {
 
     @Autowired
@@ -33,11 +35,14 @@ public class SubscriptionService {
     private ObjectNode objectNode;
 
     public ObjectNode getSubscriptions(Integer pageNo, Integer pageSize) throws NegativePageIndexException, InvalidPageSizeException {
+        log.info("getSubscriptions pageNo: {},  pageSize: {}", pageNo, pageSize);
         if(pageNo < 0) {
+            log.error("getSubscriptions: Negative Page Index Exception");
             throw new NegativePageIndexException("Page No Should Not be Negative");
         }
 
         if(pageSize > allowedPageSize) {
+            log.error("getSubscriptions: Invalid Page Size Exception");
             throw new InvalidPageSizeException("Page Size is greater than Allowed Page Size i.e."+allowedPageSize);
         }
 
@@ -51,8 +56,10 @@ public class SubscriptionService {
     }
 
     public Subscription addSubscription(Subscription subscription) throws SubscriptionFoundException {
+        log.error("addSubscriptions: subscription: {}", subscription.toString());
         var sub = subscriptionRepository.findByIcaoCode(subscription.getIcaoCode()).orElse(null);
         if(Objects.nonNull(sub)) {
+            log.error("addSubscriptions: Subscription Not Found Exception - icaoCode: {}", subscription.getIcaoCode());
             throw new SubscriptionFoundException(subscription.getIcaoCode()+ " already exists in subscription list");
         }
         subscription.setId(null);
@@ -61,8 +68,10 @@ public class SubscriptionService {
 
     @Transactional
     public ObjectNode deleteSubscription(String icaoCode) throws SubscriptionNotFoundException {
+        log.error("deleteSubscriptions: icaoCode: {}", icaoCode);
         var subscription = subscriptionRepository.findByIcaoCode(icaoCode).orElse(null);
         if(Objects.isNull(subscription)) {
+            log.error("deleteSubscriptions: Subscription Not Found Exception - icaoCode: {}", subscription.getIcaoCode());
             throw new SubscriptionNotFoundException(icaoCode+" subscription not found in list");
         }
         int metarCount = metarRepository.deleteBySubscriptionId(subscription.getId());
