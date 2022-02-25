@@ -1,6 +1,7 @@
 package com.metar.exception;
 
 import com.metar.model.ApiError;
+import io.github.mivek.exception.ParseException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -64,6 +65,12 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(NegativePageIndexException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleNegativePageIndexException(NegativePageIndexException ex) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(ParseException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleParseException(ParseException ex) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
