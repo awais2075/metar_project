@@ -25,6 +25,26 @@ public class Metar {
     @NotBlank(message = "{data.notblank}")
     private String data;
 
+    @Column(name = "timestamp")
+    @Hidden
+    private String timestamp;
+
+    @Column(name = "wind")
+    @Hidden
+    private String wind;
+
+    @Column(name = "visibility")
+    @Hidden
+    private String visibility;
+
+    @Column(name = "temperature")
+    @Hidden
+    private String temperature;
+
+    @Column(name = "dew")
+    @Hidden
+    private String dew;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "subscription_id", nullable = false)
     @Hidden
