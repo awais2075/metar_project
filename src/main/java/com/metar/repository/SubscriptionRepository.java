@@ -24,4 +24,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     @Query("select s from Subscription s where s.active = :active")
     Page<Subscription> findAllActiveSubscriptions(@Param("active") Boolean active, Pageable pageable);
 
+    @Query("select s from Subscription s where upper(s.icaoCode) like upper(concat('%', :icaoCode, '%'))")
+    Page<Subscription> findAllByIcaoCode(@Param("icaoCode") String icaoCode, Pageable pageable);
 }
