@@ -3,7 +3,7 @@
 
 ## Project Branches with Tags
     1. first-task -  v1.0
-    2. second-task - v1.0
+    2. second-task - v2.0
 
 ### Configuration
     To run application you need to configure database (Postgres) by the following steps.
