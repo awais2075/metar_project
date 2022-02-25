@@ -4,6 +4,7 @@ import com.metar.entity.Metar;
 import com.metar.exception.MetarNotFoundException;
 import com.metar.exception.SubscriptionNotFoundException;
 import com.metar.service.MetarService;
+import io.github.mivek.exception.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class MetarController {
 
     @PostMapping("/{icaoCode}/METAR")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public Metar addMetar(@PathVariable(value = "icaoCode") String icaoCode, @Valid @RequestBody Metar metar) throws SubscriptionNotFoundException {
+    public Metar addMetar(@PathVariable(value = "icaoCode") String icaoCode, @Valid @RequestBody Metar metar) throws SubscriptionNotFoundException, ParseException {
         return metarService.addMetar(icaoCode, metar);
     }
 }
