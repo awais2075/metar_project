@@ -74,6 +74,12 @@ public class RestControllerExceptionHandler {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
+    @ExceptionHandler(InvalidMetarFieldsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleInvalidMetarFieldsException(InvalidMetarFieldsException ex) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
     private ApiError buildErrorResponse(HttpStatus status, String message) {
         return ApiError.builder()
                 .timestamp(LocalDateTime.now())

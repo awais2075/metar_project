@@ -1,15 +1,21 @@
 package com.metar.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.metar.entity.Metar;
 import com.metar.exception.MetarNotFoundException;
 import com.metar.exception.SubscriptionNotFoundException;
 import com.metar.repository.MetarRepository;
 import com.metar.repository.SubscriptionRepository;
+import com.metar.util.Utils;
 import io.github.mivek.exception.ParseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -21,6 +27,9 @@ public class MetarService {
 
     @Autowired
     private SubscriptionRepository subscriptionRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     public Metar getMetars(String icaoCode) throws SubscriptionNotFoundException, MetarNotFoundException {
         log.info("getMetars: icaoCode: {}", icaoCode);
@@ -37,6 +46,22 @@ public class MetarService {
         }
 
         return metar;
+    }
+
+    public Metar getMetars(String icaoCode, String fields) {
+        fields = fields.replaceAll("\\s+", "");
+        List<String> columns = new ArrayList<>();
+        Arrays.stream(fields.split(",")).forEach(
+                field -> {
+                    if(Utils.METAR_PROPERTIES_SET.contains(field))
+                        columns.add(field);
+                }
+        );
+        String query = "Select #columns from metar order by id limit 1";
+        query = query.replace("#columns", String.join(",", columns));
+
+        var map = jdbcTemplate.queryForMap(query);
+        return new ObjectMapper().convertValue(map, Metar.class);
     }
 
     public Metar addMetar(String icaoCode, Metar metar) throws SubscriptionNotFoundException, ParseException {
