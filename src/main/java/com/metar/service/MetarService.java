@@ -2,6 +2,7 @@ package com.metar.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.metar.entity.Metar;
+import com.metar.exception.InvalidMetarFieldsException;
 import com.metar.exception.MetarNotFoundException;
 import com.metar.exception.SubscriptionNotFoundException;
 import com.metar.repository.MetarRepository;
@@ -10,13 +11,11 @@ import com.metar.util.Utils;
 import io.github.mivek.exception.ParseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -48,7 +47,14 @@ public class MetarService {
         return metar;
     }
 
-    public Metar getMetars(String icaoCode, String fields) {
+    public Metar getMetars(String icaoCode, String fields) throws InvalidMetarFieldsException, SubscriptionNotFoundException, MetarNotFoundException {
+        log.info("getMetars: icaoCode: {} fields {}", icaoCode, fields);
+        var subscription = subscriptionRepository.findByIcaoCode(icaoCode).orElse(null);
+        if(Objects.isNull(subscription)) {
+            log.error("getMetars: Subscription Not Found {}", icaoCode);
+            throw new SubscriptionNotFoundException(icaoCode+" subscription not found in list");
+        }
+
         fields = fields.replaceAll("\\s+", "");
         List<String> columns = new ArrayList<>();
         Arrays.stream(fields.split(",")).forEach(
@@ -57,10 +63,20 @@ public class MetarService {
                         columns.add(field);
                 }
         );
-        String query = "Select #columns from metar order by id limit 1";
+        String query = "Select #columns from metar where subscription_id = ? order by id limit 1";
         query = query.replace("#columns", String.join(",", columns));
 
-        var map = jdbcTemplate.queryForMap(query);
+        if(columns.isEmpty()) {
+            throw new InvalidMetarFieldsException("Invalid Metar Data Fields :"+ fields);
+        }
+        Map<String, Object> map;
+        try {
+            map = jdbcTemplate.queryForMap(query, subscription.getId());
+        }catch (EmptyResultDataAccessException ex) {
+            log.error("getMetars: Metar Not Found Exception {}", icaoCode);
+            throw new MetarNotFoundException("Metar Data not found against icaoCode : "+icaoCode);
+        }
+
         return new ObjectMapper().convertValue(map, Metar.class);
     }
 
